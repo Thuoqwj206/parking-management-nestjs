@@ -1,0 +1,6 @@
+export * from './floor.model'
+export * from './guest.model'
+export * from './parking-bill.model'
+//export * from './parking-place.model'
+export * from './user.model'
+export * from './vehicle.model'
