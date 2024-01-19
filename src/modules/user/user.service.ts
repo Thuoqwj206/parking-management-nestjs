@@ -42,14 +42,14 @@ export class UserService {
         return { user, isSuccess: true }
     }
 
-    async update(@Body() Body: UpdateUserDTO, id: number): Promise<{ updatedUser?: User, isSuccess?: boolean }> {
+    async update(@Body() Body: UpdateUserDTO, id: number, currentUser: User): Promise<{ updatedUser?: User, isSuccess?: boolean }> {
         const user = await this.usersRepository.findOne({ where: { id: id } })
         if (!user) {
             return { isSuccess: false }
         }
-        const { password, phone } = Body
+
         const updatedUser = await this.usersRepository.save({
-            id: id, password, phone
+            id: id, ...Body
         })
         return { updatedUser, isSuccess: true }
     }

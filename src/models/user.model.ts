@@ -1,5 +1,8 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Table } from "typeorm";
-
+export enum Role {
+    ADMIN = 'ADMIN',
+    USER = 'USER'
+}
 @Entity('users')
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -28,9 +31,11 @@ export class User extends BaseEntity {
     })
     password: string
 
+
     @Column({
-        type: 'boolean',
-        default: false
+        type: "enum",
+        enum: Role,
+        default: Role.USER
     })
-    isAdmin: boolean
+    role: Role
 }

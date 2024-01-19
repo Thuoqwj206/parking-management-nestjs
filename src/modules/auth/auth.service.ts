@@ -19,10 +19,9 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(requestBody.password, 5)
         requestBody.password = hashedPassword
         const newUser = await this.userService.create(requestBody)
-        const accessToken = this.generateToken(newUser)
         return {
             msg: 'User has been created',
-            accessToken
+            newUser: newUser.username
         }
     }
 
@@ -42,7 +41,7 @@ export class AuthService {
     }
 
     async generateToken(user: User) {
-        const payload = { id: user.id, isAdmin: user.isAdmin }
+        const payload = { id: user.id, role: user.role }
         return await this.jwtService.signAsync(payload)
     }
 }
