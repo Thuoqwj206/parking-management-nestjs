@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Guest, ParkingPlace, User, Vehicle } from 'src/models';
+import { Guest, ParkingBill, ParkingPlace, User, Vehicle } from 'src/models';
 @Module({
     imports: [
         TypeOrmModule.forRoot({
@@ -10,7 +10,7 @@ import { Guest, ParkingPlace, User, Vehicle } from 'src/models';
             username: 'root',
             password: 'root',
             database: 'parking-database',
-            entities: [User, Vehicle, ParkingPlace, Guest],
+            entities: [User, Vehicle, ParkingPlace, Guest, ParkingBill],
             migrations: [`${__dirname}/src/migrations/*{.ts,.js}`],
             migrationsTableName: 'migrations',
             subscribers: [`${__dirname}/subscriber/*{.ts,.js}`],

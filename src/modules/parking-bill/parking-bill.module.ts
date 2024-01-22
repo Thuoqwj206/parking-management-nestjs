@@ -1,16 +1,19 @@
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ParkingPlace } from 'src/models';
-import { ParkingPlaceService } from './parking-bill.service';
-import { ParkingPlaceController } from './parking-bill.controller';
+import { ParkingBill } from 'src/models';
+import { ParkingBillService } from './parking-bill.service';
+import { ParkingBillController } from './parking-bill.controller';
 import { UsersModule } from '../user/user.module';
+import { GuestModule } from '../guest/guest.module';
+import { ParkingPlaceModule } from '../parking-place/parking-place.module';
+
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ParkingPlace]), UsersModule],
-    providers: [ParkingPlaceService,],
-    controllers: [ParkingPlaceController],
-    exports: [ParkingPlaceService]
+    imports: [TypeOrmModule.forFeature([ParkingBill]), UsersModule, GuestModule, ParkingPlaceModule],
+    providers: [ParkingBillService,],
+    controllers: [ParkingBillController],
+    exports: [ParkingBillService]
 })
-export class ParkingPlaceModule { }
+export class ParkingBillModule { }

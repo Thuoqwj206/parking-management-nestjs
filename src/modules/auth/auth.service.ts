@@ -5,13 +5,17 @@ import { UserService } from "../user/user.service";
 import * as bcrypt from 'bcrypt';
 import { LoginUserDTO } from "./dto/login-user.dto";
 import { User } from "src/models";
+import { MailService } from "src/mail/mail.service";
+
 
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService, private userService: UserService) { }
+    constructor(private jwtService: JwtService, private userService: UserService,
+        private mailService: MailService) { }
 
     async register(@Body() requestBody: RegisterUserDTO) {
-        const user = await this.userService.findByUsername(requestBody.username)
+        const { username } = requestBody
+        const user = await this.userService.findByUsername(username)
         if (user) {
             throw new BadRequestException('Username already existed')
         }
@@ -19,6 +23,8 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(requestBody.password, 5)
         requestBody.password = hashedPassword
         const newUser = await this.userService.create(requestBody)
+        const token = await this.generateToken(newUser);
+        await this.mailService.sendUserConfirmation(newUser, token)
         return {
             msg: 'User has been created',
             newUser: newUser.username
@@ -41,7 +47,7 @@ export class AuthService {
     }
 
     async generateToken(user: User) {
-        const payload = { id: user.id, role: user.role }
+        const payload = { id: user?.id, role: user?.role }
         return await this.jwtService.signAsync(payload)
     }
 }

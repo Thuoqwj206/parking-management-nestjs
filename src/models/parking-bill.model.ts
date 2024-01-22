@@ -6,12 +6,12 @@ export class ParkingBill extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
-    @OneToOne(() => Guest, (guest) => guest.licensePlate)
-    @JoinColumn()
+    @Column({
+        type: 'varchar',
+    })
     licensePlate: string
 
-    @OneToOne(() => Guest, (guest) => guest.checkIn)
-    @JoinColumn()
+    @Column({ type: "timestamp" })
     checkIn: Date
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
@@ -27,6 +27,7 @@ export class ParkingBill extends BaseEntity {
             const diff = Math.abs(this.checkOut.getTime() - this.checkIn.getTime());
             const duration = new Date(diff).toISOString().substr(11, 8);
             this.duration = duration;
+            this.save()
         }
     }
 
@@ -42,6 +43,7 @@ export class ParkingBill extends BaseEntity {
             const additionalHoursPrice = (durationInHours - 5) * 0.5;
             const totalHoursPrice = Math.max(0, additionalHoursPrice);
             this.price = firstFiveHoursPrice + totalHoursPrice;
+            this.save()
         }
     }
 

@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Table } from "typeorm";
-import { User } from "./user.model";
 import { ParkingPlace } from "./parking-place.model";
+import { ParkingBill } from "./parking-bill.model";
 
 @Entity('guests')
 export class Guest extends BaseEntity {
@@ -15,7 +15,7 @@ export class Guest extends BaseEntity {
     })
     licensePlate: string
 
-    @OneToOne(() => ParkingPlace)
+    @OneToOne(type => ParkingPlace, parkingPlace => parkingPlace.id, { cascade: ["insert", "remove", "soft-remove", "recover"] })
     @JoinColumn()
     place: ParkingPlace
 }

@@ -11,7 +11,4 @@ export class ParkingPlace extends BaseEntity {
         default: true
     })
     isAvailable: boolean
-
-    // @ManyToOne(() => Floor, (floor) => floor.id)
-    // floor: Floor
 }

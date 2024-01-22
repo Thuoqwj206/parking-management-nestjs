@@ -19,7 +19,7 @@ export class UserService {
         }
     }
 
-    async create(@Body() Body: RegisterUserDTO): Promise<User | null> {
+    async create(@Body() Body: RegisterUserDTO): Promise<User> {
         const newUser = await this.usersRepository.create(Body)
         await this.usersRepository.save(newUser)
         return newUser
@@ -27,6 +27,7 @@ export class UserService {
 
     async findByUsername(username: string): Promise<User> {
         const user = await this.usersRepository.findOne({ where: { username } })
+        console.log(user)
         if (user) {
             return user
         }

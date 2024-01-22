@@ -1,34 +1,28 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UseGuards } from "@nestjs/common";
-import { ParkingPlaceService } from "./parking-bill.service";
+import { ParkingBillService } from "./parking-bill.service";
 import { AuthGuard } from "src/common/guard/auth.guard";
+import { CheckOutVehicleDTO } from "./dtos";
+import { Role } from "src/models";
+import { Roles } from "../decorators/role.decorator";
 
 
-@Controller('parking-place')
-export class ParkingPlaceController {
-    constructor(private readonly parkingPlaceService: ParkingPlaceService) { }
+@Controller('parking-bill')
+export class ParkingBillController {
+    constructor(private readonly parkingBillService: ParkingBillService) { }
     @Get()
     @UseGuards(AuthGuard)
+    @Roles(Role.ADMIN)
+
     async getAll() {
-        return this.parkingPlaceService.findAll()
-    }
-
-    @Get()
-    @UseGuards(AuthGuard)
-    async getAllAvailable() {
-        return this.parkingPlaceService.findAllAvailable()
+        return this.parkingBillService.findAll()
     }
     @Post()
     @UseGuards(AuthGuard)
-    async create() {
-        const newParkingPlace = await this.parkingPlaceService.create()
-        return newParkingPlace
-    }
+    @Roles(Role.ADMIN)
 
-    @Put('/:id')
-    @UseGuards(AuthGuard)
-    async takePlace(@Param('id', ParseIntPipe) id: number) {
-        const updateParkingPlace = await this.parkingPlaceService.takePlace();
-        return updateParkingPlace;
+    async checkout(@Body() body: CheckOutVehicleDTO) {
+        const newParkingBill = await this.parkingBillService.checkout(body)
+        return newParkingBill
     }
 
 }

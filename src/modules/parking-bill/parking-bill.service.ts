@@ -1,50 +1,42 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ParkingPlace } from 'src/models';
+import { ParkingBill } from 'src/models';
 import { Repository } from 'typeorm';
+import { GuestService } from '../guest/guest.service';
+import { CheckOutVehicleDTO } from './dtos';
+import { ParkingPlaceService } from '../parking-place/parking-place.service';
 
 @Injectable()
 export class ParkingBillService {
     constructor(
-        @InjectRepository(ParkingPlace)
-        private parkingPlaceRepository: Repository<ParkingPlace>,
+        @InjectRepository(ParkingBill)
+        private parkingBillRepository: Repository<ParkingBill>,
+        private guestService: GuestService,
+        private parkingPlaceService: ParkingPlaceService
     ) { }
 
-    async findAll(): Promise<ParkingPlace[]> {
-        const parkingBill = await this.parkingPlaceRepository.find();
-        if (!parkingBill) {
+    async findAll(): Promise<ParkingBill[]> {
+        const parkingBills = await this.parkingBillRepository.find();
+        if (!this.parkingBillRepository) {
             throw new NotFoundException()
         }
-        return parkingBill
+        return parkingBills
     }
 
-    async findAllAvailable(): Promise<ParkingPlace[]> {
-        const parkingBill = await this.parkingPlaceRepository.find({ where: { isAvailable: true } });
-        if (!parkingBill) {
-            throw new NotFoundException()
+    async checkout(body: CheckOutVehicleDTO): Promise<ParkingBill> {
+        const guest = await this.guestService.findById(body?.id)
+        if (!guest || guest.place?.isAvailable == true) {
+            throw new NotAcceptableException()
         }
-        return parkingBill
+        body.place = guest.place
+        body.checkIn = guest.checkIn
+        body.licensePlate = guest.licensePlate
+        const newParkingBill = await this.parkingBillRepository.create(body)
+        await this.parkingBillRepository.save(newParkingBill)
+        await this.parkingPlaceService.returnPlace(guest.place?.id)
+        return newParkingBill
     }
-
-    async create(): Promise<ParkingPlace | null> {
-        const newParkingPlace = await this.parkingPlaceRepository.create()
-        await this.parkingPlaceRepository.save(newParkingPlace)
-        return newParkingPlace
-    }
-
-    async takePlace(): Promise<ParkingPlace> {
-        const availablePlace = await this.findAllAvailable()
-        if (!availablePlace) {
-            throw new NotFoundException()
-        }
-        const place = availablePlace[0]
-        place.isAvailable = false
-        await place.save()
-        return place
-    }
-
-
     async remove(id: number): Promise<void> {
-        await this.parkingPlaceRepository.delete(id);
+        await this.parkingBillRepository.delete(id);
     }
 }

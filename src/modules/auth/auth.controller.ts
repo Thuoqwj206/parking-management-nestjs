@@ -5,9 +5,7 @@ import { LoginUserDTO } from "./dto/login-user.dto";
 import { AuthGuard } from "src/common/guard/auth.guard";
 import { currentUser } from "../decorators/current-user.decorator";
 import { User } from "src/models";
-import { RoleGuard } from "src/common/guard/role.guard";
 
-@UseGuards(RoleGuard)
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) { }

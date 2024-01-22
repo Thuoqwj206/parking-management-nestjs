@@ -1,2 +1,2 @@
-export * from './register-vehicle.dto'
+export * from './checkout-vehicle.dto'
 export * from './update-vehicle.dto'

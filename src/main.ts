@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
+import dotenv from 'dotenv';
 import { AppModule } from './app.module';
-
+dotenv.config()
 declare const module: any;
 
 async function bootstrap() {
@@ -10,5 +11,6 @@ async function bootstrap() {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
+
 }
 bootstrap()

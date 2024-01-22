@@ -18,6 +18,14 @@ export class ParkingPlaceService {
         return parkingPlaces
     }
 
+    async findById(id: number): Promise<ParkingPlace> {
+        const parkingPlace = await this.parkingPlaceRepository.findOne({ where: { id } });
+        if (!parkingPlace) {
+            throw new NotFoundException()
+        }
+        return parkingPlace
+    }
+
     async findAllAvailable(): Promise<ParkingPlace[]> {
         const parkingPlaces = await this.parkingPlaceRepository.find({ where: { isAvailable: true } });
         if (!parkingPlaces) {
@@ -43,6 +51,12 @@ export class ParkingPlaceService {
         return place
     }
 
+    async returnPlace(id: number) {
+        await this.parkingPlaceRepository.save({
+            id: id,
+            isAvailable: true
+        })
+    }
 
     async remove(id: number): Promise<void> {
         await this.parkingPlaceRepository.delete(id);
